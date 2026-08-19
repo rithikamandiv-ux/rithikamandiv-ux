@@ -14,7 +14,7 @@ jobs:
 
       - uses: Platane/snk@v3
         with:
-          github_user_name: Aakashwije
+          github_user_name: rithikamandiv-ux
           outputs: |
             dist/github-snake.svg
             dist/github-snake-dark.svg?palette=github-dark
