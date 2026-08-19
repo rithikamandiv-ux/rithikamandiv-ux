@@ -8,9 +8,12 @@
   </p>
 
   <p>
-    <a href="https://rithikamandiv.vercel.app" target="_blank">Portfolio</a>
-    &nbsp;&middot;&nbsp;
-    <a href="https://www.linkedin.com/in/rithika-mandiv/" target="_blank">LinkedIn</a>
+    <a href="https://rithikamandiv.vercel.app" target="_blank">
+      <img src="https://img.shields.io/badge/Portfolio-000000?style=flat-square&logo=vercel&logoColor=white" alt="Portfolio" />
+    </a>
+    <a href="https://www.linkedin.com/in/rithika-mandiv/" target="_blank">
+      <img src="https://img.shields.io/badge/LinkedIn-000000?style=flat-square&logo=linkedin&logoColor=0A66C2" alt="LinkedIn" />
+    </a>
   </p>
 </div>
 
@@ -76,7 +79,7 @@ Software Engineering undergraduate focused on designing and building practical, 
 **Cloud & Infrastructure**
 
 <div align="left">
-  <img src="https://img.shields.io/badge/AWS-000000?style=flat-square&logo=amazonwebservices&logoColor=FF9900" />
+  <img src="https://img.shields.io/badge/AWS-000000?style=flat-square&logo=amazonaws&logoColor=FF9900" />
   <img src="https://img.shields.io/badge/Docker-000000?style=flat-square&logo=docker&logoColor=2496ED" />
   <img src="https://img.shields.io/badge/Vercel-000000?style=flat-square&logo=vercel&logoColor=white" />
 </div>
@@ -96,12 +99,6 @@ Software Engineering undergraduate focused on designing and building practical, 
 ### Metrics
 
 <div align="center">
-  <img
-    src="https://github-readme-stats.vercel.app/api/top-langs?username=rithikamandiv-ux&locale=en&hide_title=true&layout=compact&card_width=320&langs_count=6&theme=github_dark&hide_border=true&bg_color=000000"
-    height="150"
-    alt="Most Used Languages"
-  />
-
   <img
     src="https://github-readme-streak-stats.herokuapp.com/?user=rithikamandiv-ux&theme=github-dark-blue&hide_border=true&background=000000"
     height="150"
@@ -127,19 +124,3 @@ Software Engineering undergraduate focused on designing and building practical, 
     src="https://raw.githubusercontent.com/rithikamandiv-ux/rithikamandiv-ux/output/github-snake.svg"
   />
 </picture>
-
----
-
-### Network
-
-<div align="left">
-
-  <a href="https://www.linkedin.com/in/rithika-mandiv/" target="_blank">
-    <img src="https://img.shields.io/badge/LinkedIn-000000?style=flat-square&logo=linkedin&logoColor=0A66C2" alt="LinkedIn" />
-  </a>
-
-  <a href="https://rithikamandiv.vercel.app" target="_blank">
-    <img src="https://img.shields.io/badge/Portfolio-000000?style=flat-square&logo=vercel&logoColor=white" alt="Portfolio" />
-  </a>
-
-</div>
