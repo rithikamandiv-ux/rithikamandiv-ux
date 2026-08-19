@@ -111,20 +111,11 @@ Software Engineering undergraduate focused on designing and building practical, 
 
 ### Contribution Activity
 
-<picture>
-  <source
-    media="(prefers-color-scheme: dark)"
-    srcset="https://raw.githubusercontent.com/rithikamandiv-ux/rithikamandiv-ux/output/github-snake-dark.svg"
-  />
 
-  <source
-    media="(prefers-color-scheme: light)"
-    srcset="https://raw.githubusercontent.com/rithikamandiv-ux/rithikamandiv-ux/output/github-snake.svg"
-  />
-
+<div align="center">
   <img
+    src="https://raw.githubusercontent.com/rithikamandiv-ux/rithikamandiv-ux/output/github-snake-dark.svg"
     alt="GitHub Contribution Snake"
-    src="https://raw.githubusercontent.com/rithikamandiv-ux/rithikamandiv-ux/output/github-snake.svg"
+    width="100%"
   />
-
-</picture>
+</div>
