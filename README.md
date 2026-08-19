@@ -10,9 +10,8 @@
   <p>
     <a href="https://rithikamandiv.vercel.app" target="_blank">
       <img src="https://img.shields.io/badge/Portfolio-000000?style=flat-square&logo=vercel&logoColor=white" alt="Portfolio" />
-    </a>
-    <a href="https://www.linkedin.com/in/rithika-mandiv/" target="_blank">
-      <img src="https://img.shields.io/badge/LinkedIn-000000?style=flat-square&logo=linkedin&logoColor=0A66C2" alt="LinkedIn" />
+    </a><a href="https://www.linkedin.com/in/rithika-mandiv/" target="_blank">
+      <img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white" alt="LinkedIn" />
     </a>
   </p>
 </div>
@@ -99,11 +98,13 @@ Software Engineering undergraduate focused on designing and building practical, 
 ### Metrics
 
 <div align="center">
+
   <img
     src="https://github-readme-streak-stats.herokuapp.com/?user=rithikamandiv-ux&theme=github-dark-blue&hide_border=true&background=000000"
     height="150"
     alt="GitHub Streak"
   />
+
 </div>
 
 ---
@@ -115,12 +116,15 @@ Software Engineering undergraduate focused on designing and building practical, 
     media="(prefers-color-scheme: dark)"
     srcset="https://raw.githubusercontent.com/rithikamandiv-ux/rithikamandiv-ux/output/github-snake-dark.svg"
   />
+
   <source
     media="(prefers-color-scheme: light)"
     srcset="https://raw.githubusercontent.com/rithikamandiv-ux/rithikamandiv-ux/output/github-snake.svg"
   />
+
   <img
     alt="GitHub Contribution Snake"
     src="https://raw.githubusercontent.com/rithikamandiv-ux/rithikamandiv-ux/output/github-snake.svg"
   />
+
 </picture>
