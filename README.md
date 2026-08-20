@@ -30,8 +30,6 @@ Software Engineering undergraduate focused on designing and building practical, 
 
 ### Tech Stack
 
-### <div align="center">Tech Stack</div>
-
 <div align="center">
 
 <h4>Programming Languages</h4>
