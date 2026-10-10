@@ -18,15 +18,13 @@
 
 Software Engineering undergraduate focused on designing and building practical, end-to-end software systems. I focus on understanding the engineering behind the systems I build, with an emphasis on maintainable architecture, clean code, and solving real-world problems.
 
----
+<img src="./assets/divider.svg" alt="" width="100%" />
 
-### Core Capabilities
+<img src="./assets/section-capabilities.svg" alt="Core Capabilities" width="100%" />
 
 `Full-Stack Development` &middot; `Backend Development` &middot; `REST API Development` &middot; `Database Systems` &middot; `Object-Oriented Programming` &middot; `Cloud & Infrastructure` &middot; `Machine Learning`
 
----
-
-### Tech Stack
+<img src="./assets/section-tech-stack.svg" alt="Tech Stack" width="100%" />
 
 <div align="center">
 
@@ -108,24 +106,32 @@ Software Engineering undergraduate focused on designing and building practical, 
 
 </div>
 
----
-
-### Metrics
+<img src="./assets/section-metrics.svg" alt="Metrics" width="100%" />
 
 <div align="center">
 
   <img
-    src="https://github-readme-streak-stats.herokuapp.com/?user=rithikamandiv-ux&theme=github-dark-blue&hide_border=true&background=000000"
-    height="150"
+    src="https://github-readme-streak-stats.herokuapp.com/?user=rithikamandiv-ux&hide_border=true&border_radius=12&background=0D0B1E&ring=F472B6&fire=5EEAD4&currStreakNum=FFFFFF&sideNums=FFFFFF&currStreakLabel=F472B6&sideLabels=5EEAD4&dates=B8A9D9&stroke=F472B6"
+    height="170"
     alt="GitHub Streak"
+  />
+
+  <br />
+
+  <img
+    src="https://github-readme-stats.vercel.app/api?username=rithikamandiv-ux&show_icons=true&include_all_commits=true&custom_title=%E6%88%A6%E9%97%98%E5%8A%9B%20%C2%B7%20Power%20Level&icon_color=5EEAD4&ring_color=F472B6&hide_border=true&border_radius=12&bg_color=0D0B1E&title_color=F472B6&text_color=FFFFFF"
+    height="175"
+    alt="Power Level: GitHub statistics"
+  />
+  <img
+    src="https://github-readme-stats.vercel.app/api/top-langs/?username=rithikamandiv-ux&layout=compact&langs_count=8&custom_title=%E5%B1%9E%E6%80%A7%20%C2%B7%20Elemental%20Affinities&hide_border=true&border_radius=12&bg_color=0D0B1E&title_color=F472B6&text_color=FFFFFF"
+    height="175"
+    alt="Elemental Affinities: most used languages"
   />
 
 </div>
 
----
-
-### Contribution Activity
-
+<img src="./assets/section-activity.svg" alt="Contribution Activity" width="100%" />
 
 <div align="center">
   <img

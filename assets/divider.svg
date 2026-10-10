@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 44" width="1200" height="44" role="img" aria-label="Section divider">
+  <title>Section divider</title>
+  <style>@media (prefers-reduced-motion: reduce) { .petals { display: none; } }</style>
+  <defs>
+    <linearGradient id="l" x1="0" x2="1"><stop offset="0" stop-color="#F472B6" stop-opacity="0"/><stop offset="1" stop-color="#F472B6"/></linearGradient>
+    <linearGradient id="r" x1="0" x2="1"><stop offset="0" stop-color="#5EEAD4"/><stop offset="1" stop-color="#5EEAD4" stop-opacity="0"/></linearGradient>
+  </defs>
+  <rect x="60" y="21" width="500" height="2" fill="url(#l)"/>
+  <rect x="640" y="21" width="500" height="2" fill="url(#r)"/>
+  <rect x="566" y="17.5" width="9" height="9" fill="#F472B6" transform="rotate(45 570.5 22)"/>
+  <rect x="625" y="17.5" width="9" height="9" fill="#5EEAD4" transform="rotate(45 629.5 22)"/>
+  <g transform="translate(600,22)">
+    <g fill="#F472B6"><path d="M0,-2 C5,-9 4,-15 0,-17 C-4,-15 -5,-9 0,-2 Z" transform="rotate(0)"/><path d="M0,-2 C5,-9 4,-15 0,-17 C-4,-15 -5,-9 0,-2 Z" transform="rotate(72)"/><path d="M0,-2 C5,-9 4,-15 0,-17 C-4,-15 -5,-9 0,-2 Z" transform="rotate(144)"/><path d="M0,-2 C5,-9 4,-15 0,-17 C-4,-15 -5,-9 0,-2 Z" transform="rotate(216)"/><path d="M0,-2 C5,-9 4,-15 0,-17 C-4,-15 -5,-9 0,-2 Z" transform="rotate(288)"/>
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="24s" repeatCount="indefinite"/>
+    </g>
+    <circle r="3.2" fill="#FDE68A"/>
+  </g>
+  <g class="petals">
+    <g><animateTransform attributeName="transform" type="translate" values="489,-16;462,22;460,62" dur="7.9s" begin="-6.0s" repeatCount="indefinite"/><path d="M0,-7 C4.5,-4 5.5,2 0,7 C-5.5,2 -4.5,-4 0,-7 Z" fill="#E879A9" opacity="0.44" transform="scale(1.11)"><animateTransform attributeName="transform" type="rotate" additive="sum" values="138;-267" dur="7.9s" repeatCount="indefinite"/></path></g>
+    <g><animateTransform attributeName="transform" type="translate" values="858,-16;866,22;884,62" dur="10.8s" begin="-8.9s" repeatCount="indefinite"/><path d="M0,-7 C4.5,-4 5.5,2 0,7 C-5.5,2 -4.5,-4 0,-7 Z" fill="#C4B5FD" opacity="0.50" transform="scale(1.51)"><animateTransform attributeName="transform" type="rotate" additive="sum" values="77;415" dur="10.8s" repeatCount="indefinite"/></path></g>
+    <g><animateTransform attributeName="transform" type="translate" values="1118,-16;1121,22;1143,62" dur="9.1s" begin="-3.7s" repeatCount="indefinite"/><path d="M0,-7 C4.5,-4 5.5,2 0,7 C-5.5,2 -4.5,-4 0,-7 Z" fill="#C4B5FD" opacity="0.39" transform="scale(1.13)"><animateTransform attributeName="transform" type="rotate" additive="sum" values="3;-264" dur="9.1s" repeatCount="indefinite"/></path></g>
+    <g><animateTransform attributeName="transform" type="translate" values="622,-16;594,22;618,62" dur="6.8s" begin="-0.9s" repeatCount="indefinite"/><path d="M0,-7 C4.5,-4 5.5,2 0,7 C-5.5,2 -4.5,-4 0,-7 Z" fill="#F472B6" opacity="0.77" transform="scale(1.57)"><animateTransform attributeName="transform" type="rotate" additive="sum" values="257;580" dur="6.8s" repeatCount="indefinite"/></path></g>
+    <g><animateTransform attributeName="transform" type="translate" values="786,-16;744,22;743,62" dur="9.1s" begin="-7.5s" repeatCount="indefinite"/><path d="M0,-7 C4.5,-4 5.5,2 0,7 C-5.5,2 -4.5,-4 0,-7 Z" fill="#C4B5FD" opacity="0.35" transform="scale(1.00)"><animateTransform attributeName="transform" type="rotate" additive="sum" values="153;-61" dur="9.1s" repeatCount="indefinite"/></path></g>
+    <g><animateTransform attributeName="transform" type="translate" values="402,-16;405,22;376,62" dur="10.8s" begin="-0.6s" repeatCount="indefinite"/><path d="M0,-7 C4.5,-4 5.5,2 0,7 C-5.5,2 -4.5,-4 0,-7 Z" fill="#F472B6" opacity="0.51" transform="scale(1.09)"><animateTransform attributeName="transform" type="rotate" additive="sum" values="93;471" dur="10.8s" repeatCount="indefinite"/></path></g>
+    <g><animateTransform attributeName="transform" type="translate" values="826,-16;864,22;793,62" dur="11.3s" begin="-6.7s" repeatCount="indefinite"/><path d="M0,-7 C4.5,-4 5.5,2 0,7 C-5.5,2 -4.5,-4 0,-7 Z" fill="#F9A8D4" opacity="0.41" transform="scale(1.44)"><animateTransform attributeName="transform" type="rotate" additive="sum" values="219;429" dur="11.3s" repeatCount="indefinite"/></path></g>
+  </g>
+</svg>

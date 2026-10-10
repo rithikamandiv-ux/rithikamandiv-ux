@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 132" width="1200" height="132" role="img" aria-label="Tech Stack">
+  <title>Tech Stack</title>
+  <style>@media (prefers-reduced-motion: reduce) { .petals { display: none; } }</style>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0D0B1E"/><stop offset="0.55" stop-color="#1B1033"/><stop offset="1" stop-color="#2B1442"/>
+    </linearGradient>
+    <linearGradient id="line" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#E11D48"/><stop offset="0.5" stop-color="#F472B6"/><stop offset="1" stop-color="#F472B6" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="fade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0.35" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity="1"/>
+    </linearGradient>
+    <mask id="m"><rect width="1200" height="132" fill="url(#fade)"/></mask>
+    <pattern id="waves" width="40" height="20" patternUnits="userSpaceOnUse">
+      <g fill="#1B1033" stroke="#8B6FC4" stroke-width="1">
+        <circle cx="20" cy="0" r="20"/><circle cx="20" cy="0" r="13"/><circle cx="20" cy="0" r="6"/>
+        <circle cx="0" cy="10" r="20"/><circle cx="0" cy="10" r="13"/><circle cx="0" cy="10" r="6"/>
+        <circle cx="40" cy="10" r="20"/><circle cx="40" cy="10" r="13"/><circle cx="40" cy="10" r="6"/>
+        <circle cx="20" cy="20" r="20"/><circle cx="20" cy="20" r="13"/><circle cx="20" cy="20" r="6"/>
+      </g>
+    </pattern>
+    <clipPath id="clip"><rect x="1" y="1" width="1198" height="130" rx="14"/></clipPath>
+    <filter id="glow" x="-20%" y="-40%" width="140%" height="180%">
+      <feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="rough" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="14" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="2.2"/>
+    </filter>
+  </defs>
+  <g clip-path="url(#clip)">
+    <rect width="1200" height="132" fill="url(#bg)"/>
+    <rect width="1200" height="132" fill="url(#waves)" opacity="0.22" mask="url(#m)"/>
+    <text x="1160" y="118" text-anchor="end" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif CJK JP','Noto Serif JP','Songti SC',serif" font-weight="700" font-size="150" fill="#C4B5FD" opacity="0.07">武器庫</text>
+    <g transform="translate(36,31) rotate(-5 35 35)" filter="url(#rough)">
+      <rect width="70" height="70" rx="9" fill="#D7263D"/>
+      <rect x="5" y="5" width="60" height="60" rx="6" fill="none" stroke="#FFE4E6" stroke-width="1.6" opacity="0.85"/>
+      <text x="35" y="50" text-anchor="middle" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif CJK JP','Noto Serif JP','Songti SC',serif" font-weight="700" font-size="40" fill="#FFF1F2">弐</text>
+    </g>
+    <text x="150" y="88" font-family="'Hiragino Mincho ProN','Yu Mincho','Noto Serif CJK JP','Noto Serif JP','Songti SC',serif" font-weight="700" font-size="54" fill="#FFFFFF" filter="url(#glow)">武器庫</text>
+    <text x="338" y="54" font-family="'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif" font-weight="700" font-size="13" letter-spacing="4" fill="#F472B6">BUKIKO · ぶきこ</text>
+    <text x="338" y="88" font-family="'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif" font-weight="800" font-size="25" letter-spacing="5" fill="#FFFFFF">TECH STACK</text>
+    <path d="M146,106 Q369,100 588,105" fill="none" stroke="url(#line)" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M170,111 Q369,107 508,110" fill="none" stroke="url(#line)" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
+    <text x="1166" y="34" text-anchor="end" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" letter-spacing="3" fill="#A99BC9">02 / 04</text>
+    <g class="petals">
+    <g><animateTransform attributeName="transform" type="translate" values="144,-16;162,66;158,150" dur="11.7s" begin="-3.2s" repeatCount="indefinite"/><path d="M0,-7 C4.5,-4 5.5,2 0,7 C-5.5,2 -4.5,-4 0,-7 Z" fill="#E879A9" opacity="0.53" transform="scale(1.12)"><animateTransform attributeName="transform" type="rotate" additive="sum" values="264;517" dur="11.7s" repeatCount="indefinite"/></path></g>
+    <g><animateTransform attributeName="transform" type="translate" values="1074,-16;1053,66;1108,150" dur="8.2s" begin="-6.7s" repeatCount="indefinite"/><path d="M0,-7 C4.5,-4 5.5,2 0,7 C-5.5,2 -4.5,-4 0,-7 Z" fill="#FBCFE8" opacity="0.42" transform="scale(1.18)"><animateTransform attributeName="transform" type="rotate" additive="sum" values="228;9" dur="8.2s" repeatCount="indefinite"/></path></g>
+    <g><animateTransform attributeName="transform" type="translate" values="776,-16;742,66;761,150" dur="7.0s" begin="-1.4s" repeatCount="indefinite"/><path d="M0,-7 C4.5,-4 5.5,2 0,7 C-5.5,2 -4.5,-4 0,-7 Z" fill="#F9A8D4" opacity="0.74" transform="scale(1.59)"><animateTransform attributeName="transform" type="rotate" additive="sum" values="145;540" dur="7.0s" repeatCount="indefinite"/></path></g>
+    <g><animateTransform attributeName="transform" type="translate" values="817,-16;782,66;825,150" dur="10.0s" begin="-1.8s" repeatCount="indefinite"/><path d="M0,-7 C4.5,-4 5.5,2 0,7 C-5.5,2 -4.5,-4 0,-7 Z" fill="#C4B5FD" opacity="0.45" transform="scale(1.01)"><animateTransform attributeName="transform" type="rotate" additive="sum" values="315;70" dur="10.0s" repeatCount="indefinite"/></path></g>
+    <g><animateTransform attributeName="transform" type="translate" values="946,-16;946,66;910,150" dur="11.0s" begin="-1.0s" repeatCount="indefinite"/><path d="M0,-7 C4.5,-4 5.5,2 0,7 C-5.5,2 -4.5,-4 0,-7 Z" fill="#C4B5FD" opacity="0.61" transform="scale(1.13)"><animateTransform attributeName="transform" type="rotate" additive="sum" values="10;217" dur="11.0s" repeatCount="indefinite"/></path></g>
+    <g><animateTransform attributeName="transform" type="translate" values="513,-16;556,66;483,150" dur="8.6s" begin="-2.7s" repeatCount="indefinite"/><path d="M0,-7 C4.5,-4 5.5,2 0,7 C-5.5,2 -4.5,-4 0,-7 Z" fill="#E879A9" opacity="0.46" transform="scale(1.25)"><animateTransform attributeName="transform" type="rotate" additive="sum" values="150;-91" dur="8.6s" repeatCount="indefinite"/></path></g>
+    <g><animateTransform attributeName="transform" type="translate" values="1024,-16;1063,66;985,150" dur="7.3s" begin="-5.1s" repeatCount="indefinite"/><path d="M0,-7 C4.5,-4 5.5,2 0,7 C-5.5,2 -4.5,-4 0,-7 Z" fill="#E879A9" opacity="0.36" transform="scale(1.32)"><animateTransform attributeName="transform" type="rotate" additive="sum" values="7;413" dur="7.3s" repeatCount="indefinite"/></path></g>
+    <g><animateTransform attributeName="transform" type="translate" values="843,-16;831,66;841,150" dur="8.5s" begin="-4.5s" repeatCount="indefinite"/><path d="M0,-7 C4.5,-4 5.5,2 0,7 C-5.5,2 -4.5,-4 0,-7 Z" fill="#F9A8D4" opacity="0.37" transform="scale(0.98)"><animateTransform attributeName="transform" type="rotate" additive="sum" values="202;404" dur="8.5s" repeatCount="indefinite"/></path></g>
+    <g><animateTransform attributeName="transform" type="translate" values="382,-16;426,66;390,150" dur="8.1s" begin="-7.5s" repeatCount="indefinite"/><path d="M0,-7 C4.5,-4 5.5,2 0,7 C-5.5,2 -4.5,-4 0,-7 Z" fill="#F472B6" opacity="0.35" transform="scale(1.18)"><animateTransform attributeName="transform" type="rotate" additive="sum" values="91;-319" dur="8.1s" repeatCount="indefinite"/></path></g>
+    <g><animateTransform attributeName="transform" type="translate" values="310,-16;310,66;282,150" dur="7.6s" begin="-5.2s" repeatCount="indefinite"/><path d="M0,-7 C4.5,-4 5.5,2 0,7 C-5.5,2 -4.5,-4 0,-7 Z" fill="#C4B5FD" opacity="0.68" transform="scale(1.17)"><animateTransform attributeName="transform" type="rotate" additive="sum" values="260;447" dur="7.6s" repeatCount="indefinite"/></path></g>
+    <g><animateTransform attributeName="transform" type="translate" values="933,-16;902,66;946,150" dur="7.6s" begin="-3.7s" repeatCount="indefinite"/><path d="M0,-7 C4.5,-4 5.5,2 0,7 C-5.5,2 -4.5,-4 0,-7 Z" fill="#C4B5FD" opacity="0.36" transform="scale(1.11)"><animateTransform attributeName="transform" type="rotate" additive="sum" values="140;437" dur="7.6s" repeatCount="indefinite"/></path></g>
+    </g>
+  </g>
+  <rect x="1" y="1" width="1198" height="130" rx="14" fill="none" stroke="#4A3470" stroke-width="1.5"/>
+</svg>
