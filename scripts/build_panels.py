@@ -1,23 +1,26 @@
 #!/usr/bin/env python3
-"""Build the themed Metrics and Contribution Activity panels for the profile README.
+"""Build the themed profile panel for the profile README.
 
 Run by .github/workflows/snake.yml after the snake has been generated.
 
 Why this script exists
 ----------------------
 An SVG shown in a README cannot load other images, so third-party stat cards
-cannot be placed inside a themed box. This script instead reads the numbers
-from the GitHub API and draws the cards itself, inside the same panel design
-as the other sections. It also wraps the generated snake in a matching panel.
+and the generated snake cannot simply be placed inside a themed box. This
+script instead reads the numbers from the GitHub API, draws every section
+itself, and stacks them inside ONE frame so the profile reads as a single
+continuous panel:
 
-Inputs (environment variables)
-    GITHUB_TOKEN  token used to call the GitHub API (provided by GitHub Actions)
-    GH_USER       GitHub login to read statistics for
-    OUT_DIR       folder holding github-snake-dark.svg; panels are written here
+    Core Capabilities -> Tech Stack -> Metrics -> Contribution Activity
 
-Outputs
-    OUT_DIR/metrics.svg
-    OUT_DIR/activity.svg
+Inputs
+    GITHUB_TOKEN                  token for the GitHub API (provided by GitHub Actions)
+    GH_USER                       GitHub login to read statistics for
+    OUT_DIR                       folder holding github-snake-dark.svg; output goes here
+    scripts/profile_content.json  capabilities and tech stack entries (edit this to add a technology)
+
+Output
+    OUT_DIR/profile.svg
 
 Only the Python standard library is used, so the workflow needs no install step.
 """
@@ -38,9 +41,11 @@ LOGIN = os.environ.get("GH_USER", "rithikamandiv-ux")
 TOKEN = os.environ.get("GITHUB_TOKEN", "")
 OUT_DIR = Path(os.environ.get("OUT_DIR", "dist"))
 SNAKE_FILE = OUT_DIR / "github-snake-dark.svg"
+CONTENT_FILE = Path(__file__).with_name("profile_content.json")
 
 W = 1200            # panel width in SVG units
-HEAD = 132          # height of the header strip
+HEAD = 132          # height of each section's header strip
+DIVIDER = 64        # vertical space taken by the sakura divider between sections
 SERIF = "'Hiragino Mincho ProN','Yu Mincho','Noto Serif CJK JP','Noto Serif JP','Songti SC',serif"
 SANS = "'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif"
 MONO = "ui-monospace,SFMono-Regular,Menlo,Consolas,monospace"
@@ -232,7 +237,7 @@ def rank(stats: dict) -> tuple[str, float]:
 
 
 # --------------------------------------------------------------------------
-# SVG drawing helpers (shared look with the other panels in assets/)
+# SVG drawing helpers
 # --------------------------------------------------------------------------
 def esc(text: str) -> str:
     return str(text).replace("&", "&amp;").replace("<", "&lt;")
@@ -241,72 +246,6 @@ def esc(text: str) -> str:
 def short(n: int) -> str:
     """1234 -> '1.2k'"""
     return f"{n / 1000:.1f}k" if n >= 1000 else str(n)
-
-
-def petals(seed: int, n: int, height: int, duration=(10, 20)) -> str:
-    """Falling petals. A fixed seed keeps the pattern identical between runs."""
-    rng = random.Random(seed)
-    shape = "M0,-7 C4.5,-4 5.5,2 0,7 C-5.5,2 -4.5,-4 0,-7 Z"
-    out = []
-    for _ in range(n):
-        x = rng.uniform(20, W - 20)
-        d1, d2 = rng.uniform(-45, 45), rng.uniform(-45, 45)
-        dur = rng.uniform(*duration)
-        begin = -rng.uniform(0, dur)
-        rot = rng.uniform(0, 360)
-        spin = rng.choice([-1, 1]) * rng.uniform(180, 420)
-        colour = rng.choice(["#F9A8D4", "#F472B6", "#FBCFE8", "#E879A9", "#C4B5FD"])
-        out.append(
-            f'<g><animateTransform attributeName="transform" type="translate" '
-            f'values="{x:.0f},-16;{x + d1:.0f},{height * 0.5:.0f};{x + d2:.0f},{height + 18}" '
-            f'dur="{dur:.1f}s" begin="{begin:.1f}s" repeatCount="indefinite"/>'
-            f'<path d="{shape}" fill="{colour}" opacity="{rng.uniform(0.35, 0.8):.2f}" transform="scale({rng.uniform(0.95, 1.6):.2f})">'
-            f'<animateTransform attributeName="transform" type="rotate" additive="sum" '
-            f'values="{rot:.0f};{rot + spin:.0f}" dur="{dur:.1f}s" repeatCount="indefinite"/></path></g>')
-    return "\n    ".join(out)
-
-
-def panel(height: int, label: str, seed: int, stamp: str, kanji: str, romaji: str, title: str, index: int, body: str) -> str:
-    """Wrap `body` in the themed frame: gradient background, header strip, petals and border."""
-    waves = "".join(f'<circle cx="{cx}" cy="{cy}" r="{r}"/>' for cx, cy in ((20, 0), (0, 10), (40, 10), (20, 20)) for r in (20, 13, 6))
-    kx = 150
-    tx = kx + 54 * len(kanji) + 26
-    ul = tx + len(title) * 19 + 60
-    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {height}" width="{W}" height="{height}" role="img" aria-label="{esc(label)}">
-  <title>{esc(label)}</title>
-  <style>@media (prefers-reduced-motion: reduce) {{ .petals {{ display: none; }} }}</style>
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0D0B1E"/><stop offset="0.55" stop-color="#1B1033"/><stop offset="1" stop-color="#2B1442"/></linearGradient>
-    <linearGradient id="line" x1="0" x2="1"><stop offset="0" stop-color="#E11D48"/><stop offset="0.5" stop-color="{PINK}"/><stop offset="1" stop-color="{PINK}" stop-opacity="0"/></linearGradient>
-    <linearGradient id="sep" x1="0" x2="1"><stop offset="0" stop-color="#4A3470" stop-opacity="0"/><stop offset="0.5" stop-color="#6B4FA0"/><stop offset="1" stop-color="#4A3470" stop-opacity="0"/></linearGradient>
-    <linearGradient id="fade" x1="0" y1="0" x2="1" y2="0"><stop offset="0.35" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity="1"/></linearGradient>
-    <mask id="m"><rect width="{W}" height="{height}" fill="url(#fade)"/></mask>
-    <pattern id="waves" width="40" height="20" patternUnits="userSpaceOnUse"><g fill="#1B1033" stroke="#8B6FC4" stroke-width="1">{waves}</g></pattern>
-    <clipPath id="clip"><rect x="1" y="1" width="{W - 2}" height="{height - 2}" rx="14"/></clipPath>
-    <clipPath id="langbar"><rect x="0" y="0" width="344" height="10" rx="5"/></clipPath>
-    <filter id="glow" x="-20%" y="-40%" width="140%" height="180%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-    <filter id="rough" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="{seed}" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.2"/></filter>
-  </defs>
-  <g clip-path="url(#clip)">
-    <rect width="{W}" height="{height}" fill="url(#bg)"/>
-    <rect width="{W}" height="{height}" fill="url(#waves)" opacity="0.16" mask="url(#m)"/>
-    <text x="{W - 40}" y="118" text-anchor="end" font-family="{SERIF}" font-weight="700" font-size="150" fill="#C4B5FD" opacity="0.07">{kanji}</text>
-    <g transform="translate(36,31) rotate(-5 35 35)" filter="url(#rough)"><rect width="70" height="70" rx="9" fill="#D7263D"/><rect x="5" y="5" width="60" height="60" rx="6" fill="none" stroke="#FFE4E6" stroke-width="1.6" opacity="0.85"/><text x="35" y="50" text-anchor="middle" font-family="{SERIF}" font-weight="700" font-size="40" fill="#FFF1F2">{stamp}</text></g>
-    <text x="{kx}" y="88" font-family="{SERIF}" font-weight="700" font-size="54" fill="{WHITE}" filter="url(#glow)">{kanji}</text>
-    <text x="{tx}" y="54" font-family="{SANS}" font-weight="700" font-size="13" letter-spacing="4" fill="{PINK}">{romaji}</text>
-    <text x="{tx}" y="88" font-family="{SANS}" font-weight="800" font-size="25" letter-spacing="5" fill="{WHITE}">{title}</text>
-    <path d="M{kx - 4},106 Q{(kx + ul) // 2},100 {ul},105" fill="none" stroke="url(#line)" stroke-width="3.5" stroke-linecap="round"/>
-    <path d="M{kx + 20},111 Q{(kx + ul) // 2},107 {ul - 80},110" fill="none" stroke="url(#line)" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
-    <text x="{W - 34}" y="34" text-anchor="end" font-family="{MONO}" font-size="13" letter-spacing="3" fill="#A99BC9">{index:02d} / 04</text>
-    <rect x="40" y="{HEAD}" width="{W - 80}" height="1.5" fill="url(#sep)"/>
-{body}
-    <g class="petals">
-    {petals(seed + 300, max(10, height // 34), height)}
-    </g>
-  </g>
-  <rect x="1" y="1" width="{W - 2}" height="{height - 2}" rx="14" fill="none" stroke="#4A3470" stroke-width="1.5"/>
-</svg>
-'''
 
 
 def text(x, y, content, size=16, fill=WHITE, weight=400, anchor="start") -> str:
@@ -328,10 +267,116 @@ def fmt_range(streak: dict, today: dt.date) -> str:
     return f'{fmt_date(streak["start"], today)} - {fmt_date(streak["end"], today)}'
 
 
+def petals(seed: int, height: int) -> str:
+    """Falling petals over the whole panel.
+
+    A fixed seed keeps the pattern identical between runs. The fall time grows
+    with the panel height so petals drift at the same gentle speed in a tall panel.
+    """
+    rng = random.Random(seed)
+    shape = "M0,-7 C4.5,-4 5.5,2 0,7 C-5.5,2 -4.5,-4 0,-7 Z"
+    out = []
+    for _ in range(max(12, height // 40)):
+        x = rng.uniform(20, W - 20)
+        d1, d2 = rng.uniform(-60, 60), rng.uniform(-60, 60)
+        dur = height / rng.uniform(32, 60)          # seconds to fall the full height
+        begin = -rng.uniform(0, dur)                # negative start = already mid-fall on load
+        rot = rng.uniform(0, 360)
+        spin = rng.choice([-1, 1]) * rng.uniform(360, 1440)
+        colour = rng.choice(["#F9A8D4", "#F472B6", "#FBCFE8", "#E879A9", "#C4B5FD"])
+        out.append(
+            f'<g><animateTransform attributeName="transform" type="translate" '
+            f'values="{x:.0f},-16;{x + d1:.0f},{height * 0.5:.0f};{x + d2:.0f},{height + 18}" '
+            f'dur="{dur:.1f}s" begin="{begin:.1f}s" repeatCount="indefinite"/>'
+            f'<path d="{shape}" fill="{colour}" opacity="{rng.uniform(0.35, 0.8):.2f}" transform="scale({rng.uniform(0.95, 1.6):.2f})">'
+            f'<animateTransform attributeName="transform" type="rotate" additive="sum" '
+            f'values="{rot:.0f};{rot + spin:.0f}" dur="{dur:.1f}s" repeatCount="indefinite"/></path></g>')
+    return "\n    ".join(out)
+
+
+def section_header(stamp: str, kanji: str, romaji: str, title: str, index: int, total: int) -> str:
+    """Header strip of one section: red stamp, kanji, title and the 'NN / NN' counter."""
+    kx = 150
+    tx = kx + 54 * len(kanji) + 26
+    ul = tx + len(title) * 19 + 60
+    return f'''<text x="{W - 40}" y="118" text-anchor="end" font-family="{SERIF}" font-weight="700" font-size="150" fill="#C4B5FD" opacity="0.07">{kanji}</text>
+    <g transform="translate(36,31) rotate(-5 35 35)" filter="url(#rough)"><rect width="70" height="70" rx="9" fill="#D7263D"/><rect x="5" y="5" width="60" height="60" rx="6" fill="none" stroke="#FFE4E6" stroke-width="1.6" opacity="0.85"/><text x="35" y="50" text-anchor="middle" font-family="{SERIF}" font-weight="700" font-size="40" fill="#FFF1F2">{stamp}</text></g>
+    <text x="{kx}" y="88" font-family="{SERIF}" font-weight="700" font-size="54" fill="{WHITE}" filter="url(#glow)">{kanji}</text>
+    <text x="{tx}" y="54" font-family="{SANS}" font-weight="700" font-size="13" letter-spacing="4" fill="{PINK}">{romaji}</text>
+    <text x="{tx}" y="88" font-family="{SANS}" font-weight="800" font-size="25" letter-spacing="5" fill="{WHITE}">{title}</text>
+    <path d="M{kx - 4},106 Q{(kx + ul) // 2},100 {ul},105" fill="none" stroke="url(#line)" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M{kx + 20},111 Q{(kx + ul) // 2},107 {ul - 80},110" fill="none" stroke="url(#line)" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
+    <text x="{W - 34}" y="34" text-anchor="end" font-family="{MONO}" font-size="13" letter-spacing="3" fill="#A99BC9">{index:02d} / {total:02d}</text>
+    <rect x="40" y="{HEAD}" width="{W - 80}" height="1.5" fill="url(#sep)"/>'''
+
+
+def sakura_divider(y: float) -> str:
+    """The flower line drawn between two sections, centred on height y."""
+    flower = "".join(f'<path d="M0,-2 C5,-9 4,-15 0,-17 C-4,-15 -5,-9 0,-2 Z" transform="rotate({a})"/>' for a in range(0, 360, 72))
+    return f'''<g transform="translate(0,{y})">
+      <rect x="60" y="-1" width="500" height="2" fill="url(#fl)"/><rect x="640" y="-1" width="500" height="2" fill="url(#fr)"/>
+      <rect x="566" y="-4.5" width="9" height="9" fill="{PINK}" transform="rotate(45 570.5 0)"/><rect x="625" y="-4.5" width="9" height="9" fill="{CYAN}" transform="rotate(45 629.5 0)"/>
+      <g transform="translate(600,0)"><g fill="{PINK}">{flower}<animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="24s" repeatCount="indefinite"/></g><circle r="3.2" fill="#FDE68A"/></g>
+    </g>'''
+
+
+def pill_width(item: dict, padding: int) -> int:
+    """Width of a chip: fixed padding plus the label width (measured, or estimated for new entries)."""
+    return padding + item.get("text_width", round(len(item["label"]) * 9.2))
+
+
 # --------------------------------------------------------------------------
-# Panels
+# Section bodies. Each returns (svg, height) with y measured from the section top.
 # --------------------------------------------------------------------------
-def build_metrics(streaks: dict, stats: dict, today: dt.date) -> str:
+def capabilities_body(items: list[dict]) -> tuple[str, int]:
+    chip_h, gap, parts, y = 42, 12, [], HEAD + 38
+    half = (len(items) + 1) // 2
+    for row in (items[:half], items[half:]):
+        widths = [pill_width(i, 16 + 12 + 10 + 18) for i in row]
+        x = (W - sum(widths) - gap * (len(row) - 1)) / 2
+        for item, w in zip(row, widths):
+            colour = PINK if items.index(item) % 2 == 0 else CYAN
+            parts.append(
+                f'<g transform="translate({x:.1f},{y})"><rect width="{w}" height="{chip_h}" rx="9" {CARD}/>'
+                f'<rect x="16.5" y="{chip_h / 2 - 5.5}" width="11" height="11" rx="2" fill="{colour}" transform="rotate(45 22 {chip_h / 2})"/>'
+                f'<text x="38" y="{chip_h / 2 + 5.5}" font-family="{SANS}" font-weight="600" font-size="16" fill="#F4EEFF" '
+                f'textLength="{w - 56}" lengthAdjust="spacingAndGlyphs">{esc(item["label"])}</text></g>')
+            x += w + gap
+        y += chip_h + 16
+    return "\n    ".join(parts), y - 16 + 36
+
+
+def tech_stack_body(categories: list[dict]) -> tuple[str, int]:
+    pill_h, pad_l, icon, gap, pad_r, between = 40, 13, 18, 9, 15, 10
+    parts, y = [], HEAD + 46
+    for cat in categories:
+        title = cat["category"].upper()
+        tw = len(title) * 14.2
+        parts.append(
+            f'<rect x="{600 - tw / 2 - 190:.0f}" y="{y - 6}" width="170" height="1.5" fill="url(#fl)"/>'
+            f'<rect x="{600 + tw / 2 + 20:.0f}" y="{y - 6}" width="170" height="1.5" fill="url(#fr)"/>'
+            f'<text x="600" y="{y}" text-anchor="middle" font-family="{SANS}" font-weight="700" font-size="17" letter-spacing="3" fill="{WHITE}">{esc(title)}</text>')
+        y += 22
+        widths = [pill_width(i, pad_l + icon + gap + pad_r) for i in cat["items"]]
+        x = (W - sum(widths) - between * (len(widths) - 1)) / 2
+        for item, w in zip(cat["items"], widths):
+            colour = item.get("colour", CYAN)
+            if item.get("icon"):
+                mark = f'<path d="{item["icon"]}" fill="{colour}" transform="translate({pad_l},{(pill_h - icon) / 2}) scale({icon / 24})"/>'
+            else:
+                c = pad_l + icon / 2
+                mark = f'<rect x="{c - 5.5}" y="{pill_h / 2 - 5.5}" width="11" height="11" rx="2" fill="{colour}" transform="rotate(45 {c} {pill_h / 2})"/>'
+            parts.append(
+                f'<g transform="translate({x:.1f},{y})"><rect width="{w}" height="{pill_h}" rx="9" {CARD}/>'
+                f'<rect x="6" y="{pill_h - 2.2}" width="{w - 12}" height="1.6" rx="0.8" fill="{colour}" opacity="0.55"/>{mark}'
+                f'<text x="{pad_l + icon + gap}" y="{pill_h / 2 + 5.5}" font-family="{SANS}" font-weight="600" font-size="16" fill="#F4EEFF" '
+                f'textLength="{w - pad_l - icon - gap - pad_r}" lengthAdjust="spacingAndGlyphs">{esc(item["label"])}</text></g>')
+            x += w + between
+        y += pill_h + 50
+    return "\n    ".join(parts), y - 50 + 36
+
+
+def metrics_body(streaks: dict, stats: dict, today: dt.date) -> tuple[str, int]:
     parts: list[str] = []
 
     # --- streak card -------------------------------------------------------
@@ -395,17 +440,11 @@ def build_metrics(streaks: dict, stats: dict, today: dt.date) -> str:
         parts.append(f'<circle cx="{tx + 6}" cy="{ty - 5}" r="6" fill="{lang["color"]}"/>')
         parts.append(text(tx + 20, ty, f'{lang["name"]} {lang["percent"]:.2f}%', 15, WHITE, 500))
 
-    height = py + ph + 40
-    label = (f'Metrics. {streaks["total"]} total contributions, current streak {streaks["current"]["length"]} days, '
-             f'longest streak {streaks["longest"]["length"]} days. Power level {grade}: {stats["stars"]} stars, '
-             f'{stats["commits"]} commits, {stats["prs"]} pull requests, {stats["issues"]} issues. '
-             f'Most used languages: {", ".join(l["name"] for l in stats["languages"])}.')
-    body = "\n".join("    " + p for p in parts)
-    return panel(height, label, 21, "参", "戦闘力", "SENTŌRYOKU · せんとうりょく", "METRICS", 3, body)
+    return "\n    ".join(parts), py + ph + 36
 
 
-def build_activity(snake_svg: str) -> str:
-    """Place the generated snake inside a themed panel.
+def activity_body(snake_svg: str) -> tuple[str, int]:
+    """Place the generated snake under its header.
 
     The snake file is itself an SVG, and one SVG may contain another, so its
     contents are copied in as a nested <svg> element and scaled to fit.
@@ -419,9 +458,67 @@ def build_activity(snake_svg: str) -> str:
     width = W - 80
     snake_h = round(width * vh / vw)
     top = HEAD + 22
-    body = f'    <svg x="40" y="{top}" width="{width}" height="{snake_h}" viewBox="{view.group(1)}">{inner}</svg>'
-    return panel(top + snake_h + 26, "Contribution Activity: animated snake eating the contribution graph",
-                 28, "肆", "草", "KUSA · くさ", "CONTRIBUTION ACTIVITY", 4, body)
+    return f'<svg x="40" y="{top}" width="{width}" height="{snake_h}" viewBox="{view.group(1)}">{inner}</svg>', top + snake_h + 30
+
+
+# --------------------------------------------------------------------------
+# Whole panel
+# --------------------------------------------------------------------------
+def build_profile(content: dict, streaks: dict, stats: dict, snake_svg: str, today: dt.date) -> str:
+    """Stack the four sections in one frame, with a sakura divider between them."""
+    sections = [  # (stamp, kanji, romaji, title, (body svg, body height))
+        ("壱", "技能", "GINŌ · ぎのう", "CORE CAPABILITIES", capabilities_body(content["capabilities"])),
+        ("弐", "武器庫", "BUKIKO · ぶきこ", "TECH STACK", tech_stack_body(content["tech_stack"])),
+        ("参", "戦闘力", "SENTŌRYOKU · せんとうりょく", "METRICS", metrics_body(streaks, stats, today)),
+        ("肆", "草", "KUSA · くさ", "CONTRIBUTION ACTIVITY", activity_body(snake_svg)),
+    ]
+    blocks, y = [], 0
+    for index, (stamp, kanji, romaji, title, (body, height)) in enumerate(sections, start=1):
+        blocks.append(f'<g transform="translate(0,{y})">\n    {section_header(stamp, kanji, romaji, title, index, len(sections))}\n    {body}\n    </g>')
+        y += height
+        if index < len(sections):
+            blocks.append(sakura_divider(y + DIVIDER / 2))
+            y += DIVIDER
+    height = y
+
+    grade, _ = rank(stats)
+    label = (
+        "Profile overview. Core capabilities: " + ", ".join(i["label"] for i in content["capabilities"]) + ". "
+        + "Tech stack: " + " ".join(f'{c["category"]}: {", ".join(i["label"] for i in c["items"])}.' for c in content["tech_stack"])
+        + f' Metrics: {streaks["total"]} total contributions, current streak {streaks["current"]["length"]} days, '
+        f'longest streak {streaks["longest"]["length"]} days, power level {grade}. '
+        "Contribution activity: animated snake eating the contribution graph."
+    )
+    waves = "".join(f'<circle cx="{cx}" cy="{cy}" r="{r}"/>' for cx, cy in ((20, 0), (0, 10), (40, 10), (20, 20)) for r in (20, 13, 6))
+    joined = "\n    ".join(blocks)
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {height}" width="{W}" height="{height}" role="img" aria-label="{esc(label)}">
+  <title>{esc(label)}</title>
+  <style>@media (prefers-reduced-motion: reduce) {{ .petals {{ display: none; }} }}</style>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0D0B1E"/><stop offset="0.55" stop-color="#1B1033"/><stop offset="1" stop-color="#2B1442"/></linearGradient>
+    <linearGradient id="line" x1="0" x2="1"><stop offset="0" stop-color="#E11D48"/><stop offset="0.5" stop-color="{PINK}"/><stop offset="1" stop-color="{PINK}" stop-opacity="0"/></linearGradient>
+    <linearGradient id="fl" x1="0" x2="1"><stop offset="0" stop-color="{PINK}" stop-opacity="0"/><stop offset="1" stop-color="{PINK}"/></linearGradient>
+    <linearGradient id="fr" x1="0" x2="1"><stop offset="0" stop-color="{CYAN}"/><stop offset="1" stop-color="{CYAN}" stop-opacity="0"/></linearGradient>
+    <linearGradient id="sep" x1="0" x2="1"><stop offset="0" stop-color="#4A3470" stop-opacity="0"/><stop offset="0.5" stop-color="#6B4FA0"/><stop offset="1" stop-color="#4A3470" stop-opacity="0"/></linearGradient>
+    <linearGradient id="fade" x1="0" y1="0" x2="1" y2="0"><stop offset="0.35" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity="1"/></linearGradient>
+    <mask id="m"><rect width="{W}" height="{height}" fill="url(#fade)"/></mask>
+    <pattern id="waves" width="40" height="20" patternUnits="userSpaceOnUse"><g fill="#1B1033" stroke="#8B6FC4" stroke-width="1">{waves}</g></pattern>
+    <clipPath id="clip"><rect x="1" y="1" width="{W - 2}" height="{height - 2}" rx="14"/></clipPath>
+    <clipPath id="langbar"><rect x="0" y="0" width="344" height="10" rx="5"/></clipPath>
+    <filter id="glow" x="-20%" y="-40%" width="140%" height="180%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="rough" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="14" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.2"/></filter>
+  </defs>
+  <g clip-path="url(#clip)">
+    <rect width="{W}" height="{height}" fill="url(#bg)"/>
+    <rect width="{W}" height="{height}" fill="url(#waves)" opacity="0.16" mask="url(#m)"/>
+    {joined}
+    <g class="petals">
+    {petals(321, height)}
+    </g>
+  </g>
+  <rect x="1" y="1" width="{W - 2}" height="{height - 2}" rx="14" fill="none" stroke="#4A3470" stroke-width="1.5"/>
+</svg>
+'''
 
 
 def main() -> None:
@@ -429,14 +526,15 @@ def main() -> None:
         sys.exit("GITHUB_TOKEN is not set")
     if not SNAKE_FILE.exists():
         sys.exit(f"{SNAKE_FILE} not found; the snake must be generated before this script runs")
+    content = json.loads(CONTENT_FILE.read_text(encoding="utf-8"))
     today = dt.datetime.now(dt.timezone.utc).date()
     streaks = compute_streaks(fetch_contribution_days(), today)
     stats = fetch_stats()
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    (OUT_DIR / "metrics.svg").write_text(build_metrics(streaks, stats, today), encoding="utf-8")
-    (OUT_DIR / "activity.svg").write_text(build_activity(SNAKE_FILE.read_text(encoding="utf-8")), encoding="utf-8")
-    print(f"Wrote metrics.svg and activity.svg to {OUT_DIR}/ "
-          f'(total {streaks["total"]}, current streak {streaks["current"]["length"]}, grade {rank(stats)[0]})')
+    svg = build_profile(content, streaks, stats, SNAKE_FILE.read_text(encoding="utf-8"), today)
+    (OUT_DIR / "profile.svg").write_text(svg, encoding="utf-8")
+    print(f'Wrote {OUT_DIR}/profile.svg (total {streaks["total"]}, '
+          f'current streak {streaks["current"]["length"]}, grade {rank(stats)[0]})')
 
 
 if __name__ == "__main__":
