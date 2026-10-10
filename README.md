@@ -6,6 +6,6 @@
 
 <img src="./assets/tech-stack.svg" alt="Tech Stack. Programming Languages: Java, Python, JavaScript, TypeScript, Go, C#, SQL, HTML5, CSS3. Frontend Development: React, Next.js, Vite, Tailwind CSS, Framer Motion, Leaflet, JavaFX. Backend Development: Node.js, Express.js, Spring Boot, FastAPI, ASP.NET Core. Databases: PostgreSQL, MySQL, SQLite, Redis, Prisma, Flyway. Machine Learning and Data: Scikit-learn, Pandas, Jupyter, Streamlit. Cloud and Infrastructure: AWS, Docker, Vercel, Railway, GitHub Actions. Development Tools: Git, GitHub, VS Code, IntelliJ IDEA, Maven, ESLint, Figma." width="100%" />
 
-<img src="https://raw.githubusercontent.com/rithikamandiv-ux/rithikamandiv-ux/output/metrics.svg" alt="Metrics: contribution streak, power level and most used languages" width="100%" />
+<img src="https://raw.githubusercontent.com/rithikamandiv-ux/rithikamandiv-ux/output/metrics.svg?v=2" alt="Metrics: contribution streak, power level and most used languages" width="100%" />
 
-<img src="https://raw.githubusercontent.com/rithikamandiv-ux/rithikamandiv-ux/output/activity.svg" alt="Contribution Activity: animated snake eating the contribution graph" width="100%" />
+<img src="https://raw.githubusercontent.com/rithikamandiv-ux/rithikamandiv-ux/output/activity.svg?v=2" alt="Contribution Activity: animated snake eating the contribution graph" width="100%" />
