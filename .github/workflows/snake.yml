@@ -20,7 +20,7 @@ jobs:
           github_user_name: rithikamandiv-ux
           outputs: |
             dist/github-snake.svg
-            dist/github-snake-dark.svg?palette=github-dark
+            dist/github-snake-dark.svg?color_snake=#5EEAD4&color_dots=#1A1530,#3B1D5E,#6D28A8,#C026D3,#F472B6
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
