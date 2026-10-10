@@ -54,11 +54,10 @@ CARD = 'fill="#0B0918" fill-opacity="0.82" stroke="#4A3470" stroke-width="1.2"'
 def _request(url: str, payload: dict | None = None) -> dict:
     """Send one authenticated request and return the decoded JSON body."""
     data = json.dumps(payload).encode() if payload is not None else None
-    req = urllib.request.Request(url, data=data, headers={
-        "Authorization": f"Bearer {TOKEN}",
-        "Accept": "application/vnd.github+json",
-        "User-Agent": f"{LOGIN}-profile-panels",
-    })
+    headers = {"Accept": "application/vnd.github+json", "User-Agent": f"{LOGIN}-profile-panels"}
+    if TOKEN:
+        headers["Authorization"] = f"Bearer {TOKEN}"
+    req = urllib.request.Request(url, data=data, headers=headers)
     with urllib.request.urlopen(req, timeout=30) as resp:
         return json.load(resp)
 
@@ -127,57 +126,79 @@ def compute_streaks(days: dict[dt.date, int], today: dt.date) -> dict:
     return {"total": total, "first": first, "current": current, "longest": longest}
 
 
+# GitHub's own colours for common languages (the REST API does not return them).
+LANGUAGE_COLOURS = {
+    "TypeScript": "#3178C6", "JavaScript": "#F1E05A", "Java": "#B07219", "Python": "#3572A5",
+    "C#": "#9B7BFF", "Go": "#00ADD8", "CSS": "#8E6FD8", "HTML": "#E34C26", "PHP": "#7A86B8",
+    "Kotlin": "#A97BFF", "Rust": "#DEA584", "Swift": "#F05138", "Shell": "#89E051",
+    "Dockerfile": "#5B8FA3", "EJS": "#D4427A", "Jupyter Notebook": "#DA5B0B", "SCSS": "#C6538C",
+    "C++": "#F34B7D", "C": "#8A8A8A", "PLpgSQL": "#5B8FC7", "Makefile": "#6FA83A",
+}
+
+
+def rest(path: str) -> dict | list:
+    """Call the GitHub REST API. Public data here is readable by the workflow token."""
+    return _request("https://api.github.com" + path)
+
+
+def search_count(kind: str, query: str) -> int:
+    """Number of results for a search, for example all pull requests opened by the user."""
+    return rest(f"/search/{kind}?per_page=1&q=" + urllib.parse.quote(query)).get("total_count", 0)
+
+
 def fetch_stats() -> dict:
-    """Return profile statistics and the most used languages."""
-    data = graphql(
-        """
-        query($login:String!){
-          user(login:$login){
-            followers{totalCount}
-            pullRequests(first:1){totalCount}
-            issues(first:1){totalCount}
-            repositoriesContributedTo(first:1,contributionTypes:[COMMIT,ISSUE,PULL_REQUEST,REPOSITORY]){totalCount}
-            contributionsCollection{totalCommitContributions totalPullRequestReviewContributions}
-            repositories(first:100,ownerAffiliations:OWNER,isFork:false){
-              nodes{
-                stargazers{totalCount}
-                languages(first:10,orderBy:{field:SIZE,direction:DESC}){edges{size node{name color}}}
-              }
-            }
-          }
-        }""",
-        login=LOGIN,
-    )["user"]
+    """Return profile statistics and the most used languages.
 
-    def count(key: str) -> int:
-        return ((data.get(key) or {}).get("totalCount")) or 0
+    The REST API is used here on purpose. The token GitHub Actions provides is
+    limited to the repository the workflow runs in, and the GraphQL API refuses
+    to return details of the user's other repositories to it ("Resource not
+    accessible by integration"). The REST API serves the same public data.
+    """
+    followers = rest(f"/users/{LOGIN}").get("followers", 0)
 
-    collection = data.get("contributionsCollection") or {}
-    commits = collection.get("totalCommitContributions") or 0
-    try:  # all-time commit count; the GraphQL figure above only covers the last year
-        found = _request("https://api.github.com/search/commits?per_page=1&q=" + urllib.parse.quote(f"author:{LOGIN}"))
-        commits = max(commits, found.get("total_count", 0))
-    except (urllib.error.URLError, ValueError) as exc:
-        print("Commit search failed, using last-year commit count:", exc, file=sys.stderr)
+    repos, page = [], 1
+    while True:
+        batch = rest(f"/users/{LOGIN}/repos?type=owner&per_page=100&page={page}")
+        repos += [r for r in batch if not r.get("fork")]
+        if len(batch) < 100:
+            break
+        page += 1
 
-    repos = (data.get("repositories") or {}).get("nodes") or []
-    sizes: dict[str, list] = {}
+    sizes: dict[str, int] = {}
     for repo in repos:
-        for edge in (repo.get("languages") or {}).get("edges") or []:
-            entry = sizes.setdefault(edge["node"]["name"], [0, edge["node"].get("color") or "#8B949E"])
-            entry[0] += edge["size"]
-    top = sorted(sizes.items(), key=lambda kv: kv[1][0], reverse=True)[:8]
-    shown_total = sum(v[0] for _, v in top) or 1
-    languages = [{"name": n, "color": v[1], "percent": 100 * v[0] / shown_total} for n, v in top]
+        for name, size in rest(f"/repos/{repo['full_name']}/languages").items():
+            sizes[name] = sizes.get(name, 0) + size
+    top = sorted(sizes.items(), key=lambda kv: kv[1], reverse=True)[:8]
+    shown_total = sum(size for _, size in top) or 1
+    languages = [{"name": name, "color": LANGUAGE_COLOURS.get(name, "#8B949E"), "percent": 100 * size / shown_total}
+                 for name, size in top]
+
+    # Optional extras. If the token may not read them, the panel still builds.
+    reviews = contributed_to = 0
+    try:
+        extra = graphql(
+            """
+            query($login:String!){
+              user(login:$login){
+                contributionsCollection{totalPullRequestReviewContributions}
+                repositoriesContributedTo(first:1,contributionTypes:[COMMIT,ISSUE,PULL_REQUEST,REPOSITORY]){totalCount}
+              }
+            }""",
+            login=LOGIN,
+        ).get("user") or {}
+        reviews = (extra.get("contributionsCollection") or {}).get("totalPullRequestReviewContributions") or 0
+        contributed_to = (extra.get("repositoriesContributedTo") or {}).get("totalCount") or 0
+    except (RuntimeError, urllib.error.URLError, ValueError) as exc:
+        print("Optional statistics unavailable:", exc, file=sys.stderr)
 
     return {
-        "stars": sum((r.get("stargazers") or {}).get("totalCount", 0) for r in repos),
-        "commits": commits,
-        "prs": count("pullRequests"),
-        "issues": count("issues"),
-        "contributed_to": count("repositoriesContributedTo"),
-        "reviews": collection.get("totalPullRequestReviewContributions") or 0,
-        "followers": count("followers"),
+        "stars": sum(r.get("stargazers_count", 0) for r in repos),
+        "commits": search_count("commits", f"author:{LOGIN}"),
+        "prs": search_count("issues", f"author:{LOGIN} type:pr"),
+        "issues": search_count("issues", f"author:{LOGIN} type:issue"),
+        "contributed_to": contributed_to,
+        "reviews": reviews,
+        "followers": followers,
         "languages": languages,
     }
 
