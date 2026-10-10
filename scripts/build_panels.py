@@ -11,13 +11,14 @@ script instead reads the numbers from the GitHub API, draws every section
 itself, and stacks them inside ONE frame so the profile reads as a single
 continuous panel:
 
-    Core Capabilities -> Tech Stack -> Metrics -> Contribution Activity
+    Intro -> Core Capabilities -> Tech Stack -> Metrics -> Contribution Activity
 
 Inputs
     GITHUB_TOKEN                  token for the GitHub API (provided by GitHub Actions)
     GH_USER                       GitHub login to read statistics for
     OUT_DIR                       folder holding github-snake-dark.svg; output goes here
-    scripts/profile_content.json  capabilities and tech stack entries (edit this to add a technology)
+    scripts/profile_content.json  name, intro, capabilities and tech stack entries (edit this to add a technology)
+    assets/banner.png             banner picture shown in the intro
 
 Output
     OUT_DIR/profile.svg
@@ -26,6 +27,7 @@ Only the Python standard library is used, so the workflow needs no install step.
 """
 from __future__ import annotations
 
+import base64
 import datetime as dt
 import json
 import os
@@ -294,8 +296,8 @@ def petals(seed: int, height: int) -> str:
     return "\n    ".join(out)
 
 
-def section_header(stamp: str, kanji: str, romaji: str, title: str, index: int, total: int) -> str:
-    """Header strip of one section: red stamp, kanji, title and the 'NN / NN' counter."""
+def section_header(stamp: str, kanji: str, romaji: str, title: str) -> str:
+    """Header strip of one section: red stamp, kanji and title."""
     kx = 150
     tx = kx + 54 * len(kanji) + 26
     ul = tx + len(title) * 19 + 60
@@ -306,7 +308,6 @@ def section_header(stamp: str, kanji: str, romaji: str, title: str, index: int, 
     <text x="{tx}" y="88" font-family="{SANS}" font-weight="800" font-size="25" letter-spacing="5" fill="{WHITE}">{title}</text>
     <path d="M{kx - 4},106 Q{(kx + ul) // 2},100 {ul},105" fill="none" stroke="url(#line)" stroke-width="3.5" stroke-linecap="round"/>
     <path d="M{kx + 20},111 Q{(kx + ul) // 2},107 {ul - 80},110" fill="none" stroke="url(#line)" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>
-    <text x="{W - 34}" y="34" text-anchor="end" font-family="{MONO}" font-size="13" letter-spacing="3" fill="#A99BC9">{index:02d} / {total:02d}</text>
     <rect x="40" y="{HEAD}" width="{W - 80}" height="1.5" fill="url(#sep)"/>'''
 
 
@@ -328,6 +329,32 @@ def pill_width(item: dict, padding: int) -> int:
 # --------------------------------------------------------------------------
 # Section bodies. Each returns (svg, height) with y measured from the section top.
 # --------------------------------------------------------------------------
+def hero_body(profile: dict) -> tuple[str, int]:
+    """Top section: name, role line, banner picture and the intro paragraph.
+
+    An SVG shown as an image cannot load a separate picture file, so the banner
+    is read from the repository and embedded as text (a base64 "data URI").
+    """
+    banner = Path(__file__).resolve().parent.parent / profile["banner"]
+    encoded = base64.b64encode(banner.read_bytes()).decode()
+    bw = W - 80
+    bh = round(bw * profile["banner_height"] / profile["banner_width"])
+    by = 168
+    roles = f'</tspan><tspan fill="{CYAN}" dx="12">|</tspan><tspan dx="12">'.join(esc(r) for r in profile["roles"])
+    parts = [
+        f'<text x="{W - 40}" y="124" text-anchor="end" font-family="{SERIF}" font-weight="700" font-size="120" fill="#C4B5FD" opacity="0.07">自己紹介</text>',
+        f'<text x="60" y="52" font-family="{SANS}" font-weight="700" font-size="13" letter-spacing="4" fill="{PINK}">JIKOSHŌKAI · じこしょうかい</text>',
+        f'<text x="58" y="104" font-family="{SANS}" font-weight="800" font-size="50" letter-spacing="4" fill="{WHITE}" filter="url(#glow)">{esc(profile["name"])}</text>',
+        '<path d="M56,120 Q330,113 640,119" fill="none" stroke="url(#line)" stroke-width="3.5" stroke-linecap="round"/>',
+        f'<text x="60" y="150" font-family="{SANS}" font-weight="700" font-size="18" letter-spacing="1.5" fill="#F4EEFF"><tspan>{roles}</tspan></text>',
+        f'<image x="40" y="{by}" width="{bw}" height="{bh}" preserveAspectRatio="xMidYMid meet" href="data:image/png;base64,{encoded}"/>',
+    ]
+    ty = by + bh + 44
+    for i, line in enumerate(profile["intro_lines"]):
+        parts.append(text(600, ty + i * 31, line, 19, "#E9E1FF", 400, "middle"))
+    return "\n    ".join(parts), ty + (len(profile["intro_lines"]) - 1) * 31 + 34
+
+
 def capabilities_body(items: list[dict]) -> tuple[str, int]:
     chip_h, gap, parts, y = 42, 12, [], HEAD + 38
     half = (len(items) + 1) // 2
@@ -465,25 +492,28 @@ def activity_body(snake_svg: str) -> tuple[str, int]:
 # Whole panel
 # --------------------------------------------------------------------------
 def build_profile(content: dict, streaks: dict, stats: dict, snake_svg: str, today: dt.date) -> str:
-    """Stack the four sections in one frame, with a sakura divider between them."""
+    """Stack the intro and the four sections in one frame, with a sakura divider between them."""
     sections = [  # (stamp, kanji, romaji, title, (body svg, body height))
         ("壱", "技能", "GINŌ · ぎのう", "CORE CAPABILITIES", capabilities_body(content["capabilities"])),
         ("弐", "武器庫", "BUKIKO · ぶきこ", "TECH STACK", tech_stack_body(content["tech_stack"])),
         ("参", "戦闘力", "SENTŌRYOKU · せんとうりょく", "METRICS", metrics_body(streaks, stats, today)),
         ("肆", "草", "KUSA · くさ", "CONTRIBUTION ACTIVITY", activity_body(snake_svg)),
     ]
-    blocks, y = [], 0
-    for index, (stamp, kanji, romaji, title, (body, height)) in enumerate(sections, start=1):
-        blocks.append(f'<g transform="translate(0,{y})">\n    {section_header(stamp, kanji, romaji, title, index, len(sections))}\n    {body}\n    </g>')
+    hero, hero_height = hero_body(content["profile"])
+    blocks = [f"<g>\n    {hero}\n    </g>", sakura_divider(hero_height + DIVIDER / 2)]
+    y = hero_height + DIVIDER
+    for position, (stamp, kanji, romaji, title, (body, height)) in enumerate(sections, start=1):
+        blocks.append(f'<g transform="translate(0,{y})">\n    {section_header(stamp, kanji, romaji, title)}\n    {body}\n    </g>')
         y += height
-        if index < len(sections):
+        if position < len(sections):
             blocks.append(sakura_divider(y + DIVIDER / 2))
             y += DIVIDER
     height = y
 
     grade, _ = rank(stats)
     label = (
-        "Profile overview. Core capabilities: " + ", ".join(i["label"] for i in content["capabilities"]) + ". "
+        f'{content["profile"]["name"].title()}. {" | ".join(content["profile"]["roles"])}. {" ".join(content["profile"]["intro_lines"])} '
+        + "Core capabilities: " + ", ".join(i["label"] for i in content["capabilities"]) + ". "
         + "Tech stack: " + " ".join(f'{c["category"]}: {", ".join(i["label"] for i in c["items"])}.' for c in content["tech_stack"])
         + f' Metrics: {streaks["total"]} total contributions, current streak {streaks["current"]["length"]} days, '
         f'longest streak {streaks["longest"]["length"]} days, power level {grade}. '

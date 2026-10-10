@@ -1,5 +1,20 @@
 {
- "_readme": "Content for the profile panel. text_width is the label width in pixels at 16px bold; leave it out for a new item and the script estimates it. icon is an SVG path on a 24x24 grid (from simpleicons.org); use null for a plain diamond.",
+ "_readme": "Content for the profile panel. text_width is the label width in pixels at 16px bold; leave it out for a new item and the script estimates it. icon is an SVG path on a 24x24 grid (from simpleicons.org); use null for a plain diamond. intro_lines are the intro paragraph already split into lines of at most about 110 characters.",
+ "profile": {
+  "name": "RITHIKA MANDIV",
+  "roles": [
+   "Software Engineering Undergraduate",
+   "Full-Stack Developer"
+  ],
+  "banner": "assets/banner.png",
+  "banner_width": 1120,
+  "banner_height": 382,
+  "intro_lines": [
+   "Software Engineering undergraduate focused on designing and building practical, end-to-end software systems. I",
+   "focus on understanding the engineering behind the systems I build, with an emphasis on maintainable",
+   "architecture, clean code, and solving real-world problems."
+  ]
+ },
  "capabilities": [
   {
    "label": "Full-Stack Development",
