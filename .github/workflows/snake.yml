@@ -4,6 +4,12 @@ on:
   schedule:
     - cron: "0 */12 * * *"
   workflow_dispatch:
+  # Rebuild straight away when the workflow or the panel script changes.
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/snake.yml"
+      - "scripts/**"
 
 permissions:
   contents: write
@@ -14,6 +20,10 @@ jobs:
     timeout-minutes: 5
 
     steps:
+      # Needed so the runner has scripts/build_panels.py.
+      - name: Check out repository
+        uses: actions/checkout@v4
+
       - name: Generate Snake
         uses: Platane/snk/svg-only@v3
         with:
@@ -23,6 +33,14 @@ jobs:
             dist/github-snake-dark.svg?color_snake=#5EEAD4&color_dots=#1A1530,#3B1D5E,#6D28A8,#C026D3,#F472B6
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Draws dist/metrics.svg and dist/activity.svg (themed panels).
+      - name: Build themed panels
+        run: python3 scripts/build_panels.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_USER: rithikamandiv-ux
+          OUT_DIR: dist
 
       - name: Push Snake to output branch
         uses: crazy-max/ghaction-github-pages@v3.1.0
