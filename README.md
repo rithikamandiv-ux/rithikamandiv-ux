@@ -8,6 +8,14 @@
   </p>
 </div>
 
+<div align="center">
+  <img
+    src="./assets/banner.jpeg"
+    alt="Rithika Wickramasinghe banner"
+    width="100%"
+  />
+</div>
+
 Software Engineering undergraduate focused on designing and building practical, end-to-end software systems. I focus on understanding the engineering behind the systems I build, with an emphasis on maintainable architecture, clean code, and solving real-world problems.
 
 ---
